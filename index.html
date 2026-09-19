@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>AlteoVote</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+    --bg:#08090c;
+    --panel:#101218;
+    --panel2:#151820;
+    --border:#252a35;
+    --text:#f5f7fb;
+    --muted:#8d94a3;
+    --accent:#6d7cff;
+    --accent2:#8b5cf6;
+    --green:#31d17c;
+    --red:#ff5263;
+    --yellow:#f5c451;
+}
+
+html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    min-height:100%;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+
+body{
+    overflow-x:hidden;
+}
+
+button,
+input,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    min-height:100vh;
+}
+
+.header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    height:68px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 18px;
+    background:rgba(8,9,12,.9);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(18px);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight:800;
+    font-size:20px;
+    letter-spacing:-.5px;
+}
+
+.logo-box{
+    width:35px;
+    height:35px;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    font-weight:900;
+}
+
+.header-actions{
+    display:flex;
+    gap:8px;
+}
+
+.btn{
+    border:1px solid var(--border);
+    background:var(--panel);
+    color:var(--text);
+    padding:10px 14px;
+    border-radius:11px;
+    font-weight:700;
+    transition:.15s;
+}
+
+.btn:active{
+    transform:scale(.97);
+}
+
+.btn.primary{
+    border:none;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+
+.btn.danger{
+    background:rgba(255,82,99,.1);
+    color:#ff7180;
+    border-color:rgba(255,82,99,.25);
+}
+
+.btn.success{
+    background:rgba(49,209,124,.1);
+    color:#4de28e;
+    border-color:rgba(49,209,124,.25);
+}
+
+.btn.small{
+    padding:8px 11px;
+    font-size:13px;
+}
+
+.main{
+    width:min(1050px,calc(100% - 28px));
+    margin:auto;
+    padding:35px 0 70px;
+}
+
+.hero{
+    padding:20px 0 28px;
+}
+
+.hero h1{
+    font-size:clamp(32px,8vw,52px);
+    line-height:1;
+    margin:0 0 12px;
+    letter-spacing:-2px;
+}
+
+.hero p{
+    margin:0;
+    color:var(--muted);
+    font-size:16px;
+}
+
+.search{
+    width:100%;
+    height:48px;
+    border:1px solid var(--border);
+    background:var(--panel);
+    border-radius:13px;
+    color:var(--text);
+    padding:0 15px;
+    outline:none;
+    margin-bottom:18px;
+}
+
+.search:focus{
+    border-color:var(--accent);
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:25px;
+}
+
+.stat{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:15px;
+}
+
+.stat-number{
+    font-size:25px;
+    font-weight:850;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+}
+
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:25px 0 12px;
+}
+
+.section-title h2{
+    margin:0;
+    font-size:19px;
+}
+
+.poll-list{
+    display:grid;
+    gap:13px;
+}
+
+.poll-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:17px;
+    padding:17px;
+}
+
+.poll-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.poll-question{
+    font-size:18px;
+    font-weight:800;
+    line-height:1.25;
+}
+
+.poll-description{
+    color:var(--muted);
+    margin-top:7px;
+    font-size:14px;
+    line-height:1.4;
+}
+
+.status{
+    flex:none;
+    height:max-content;
+    padding:5px 8px;
+    border-radius:7px;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.5px;
+}
+
+.status.open{
+    color:#48df8a;
+    background:rgba(49,209,124,.1);
+}
+
+.status.ended{
+    color:#ff6877;
+    background:rgba(255,82,99,.1);
+}
+
+.options{
+    display:grid;
+    gap:8px;
+    margin-top:15px;
+}
+
+.option{
+    position:relative;
+    overflow:hidden;
+    width:100%;
+    min-height:46px;
+    text-align:left;
+    border:1px solid var(--border);
+    border-radius:11px;
+    background:var(--panel2);
+    color:var(--text);
+    padding:11px 13px;
+}
+
+.option:not(:disabled):active{
+    transform:scale(.99);
+}
+
+.option:disabled{
+    cursor:default;
+    opacity:.8;
+}
+
+.option-content{
+    position:relative;
+    z-index:2;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.option-bar{
+    position:absolute;
+    inset:0 auto 0 0;
+    background:rgba(109,124,255,.14);
+}
+
+.option-name{
+    font-weight:650;
+}
+
+.option-votes{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.poll-footer{
+    display:flex;
+    justify-content:space-between;
+    color:var(--muted);
+    font-size:12px;
+    margin-top:12px;
+}
+
+.empty{
+    text-align:center;
+    padding:50px 20px;
+    border:1px dashed var(--border);
+    border-radius:17px;
+    color:var(--muted);
+}
+
+/* MODALS */
+
+.modal-bg{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+    background:rgba(0,0,0,.7);
+    backdrop-filter:blur(12px);
+}
+
+.modal-bg.show{
+    display:flex;
+}
+
+.modal{
+    width:min(430px,100%);
+    background:#11141a;
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:20px;
+    box-shadow:0 25px 80px rgba(0,0,0,.5);
+}
+
+.modal h2{
+    margin:0 0 6px;
+}
+
+.modal-sub{
+    color:var(--muted);
+    font-size:13px;
+    margin-bottom:18px;
+}
+
+.field{
+    margin-bottom:13px;
+}
+
+.field label{
+    display:block;
+    color:#b9bfca;
+    font-size:12px;
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+.field input,
+.field textarea{
+    width:100%;
+    border:1px solid var(--border);
+    background:#0b0d11;
+    color:var(--text);
+    border-radius:11px;
+    padding:12px;
+    outline:none;
+    resize:vertical;
+}
+
+.field textarea{
+    min-height:80px;
+}
+
+.field input:focus,
+.field textarea:focus{
+    border-color:var(--accent);
+}
+
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:17px;
+}
+
+/* ADMIN */
+
+.admin-bg{
+    position:fixed;
+    inset:0;
+    z-index:90;
+    display:none;
+    background:#08090c;
+}
+
+.admin-bg.show{
+    display:block;
+}
+
+.admin-shell{
+    width:100%;
+    height:100%;
+    overflow:auto;
+}
+
+.admin-header{
+    position:sticky;
+    top:0;
+    z-index:10;
+    height:68px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 16px;
+    background:rgba(8,9,12,.93);
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(18px);
+}
+
+.admin-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.admin-title strong{
+    font-size:17px;
+}
+
+.admin-title span{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.admin-body{
+    width:min(1100px,calc(100% - 28px));
+    margin:auto;
+    padding:22px 0 60px;
+}
+
+.admin-tabs{
+    display:flex;
+    gap:7px;
+    overflow-x:auto;
+    padding-bottom:3px;
+    margin-bottom:20px;
+}
+
+.admin-tabs::-webkit-scrollbar{
+    display:none;
+}
+
+.tab{
+    flex:none;
+    border:1px solid var(--border);
+    background:var(--panel);
+    color:var(--muted);
+    padding:10px 14px;
+    border-radius:10px;
+    font-weight:750;
+}
+
+.tab.active{
+    color:white;
+    background:rgba(109,124,255,.15);
+    border-color:rgba(109,124,255,.4);
+}
+
+.admin-view{
+    display:none;
+}
+
+.admin-view.active{
+    display:block;
+}
+
+.admin-stat-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+}
+
+.admin-stat{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:16px;
+}
+
+.admin-stat .num{
+    font-size:25px;
+    font-weight:850;
+}
+
+.admin-stat .label{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+}
+
+.admin-section{
+    margin-top:22px;
+}
+
+.admin-section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.admin-section-head h2{
+    margin:0;
+    font-size:18px;
+}
+
+.admin-poll-list{
+    display:grid;
+    gap:10px;
+}
+
+.admin-poll{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:15px;
+}
+
+.admin-poll-main{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.admin-poll h3{
+    margin:0;
+    font-size:16px;
+}
+
+.admin-meta{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:6px;
+}
+
+.admin-actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:7px;
+    margin-top:13px;
+}
+
+.admin-search{
+    width:100%;
+    height:46px;
+    border:1px solid var(--border);
+    background:var(--panel);
+    border-radius:11px;
+    padding:0 13px;
+    color:white;
+    outline:none;
+    margin-bottom:12px;
+}
+
+.choice-row{
+    display:flex;
+    gap:7px;
+    margin-bottom:8px;
+}
+
+.choice-row input{
+    flex:1;
+}
+
+.remove-choice{
+    width:42px;
+    border:1px solid rgba(255,82,99,.25);
+    background:rgba(255,82,99,.1);
+    color:#ff6b7a;
+    border-radius:10px;
+    font-size:18px;
+}
+
+.add-choice{
+    width:100%;
+    border:1px dashed #343a49;
+    background:transparent;
+    color:#9da5b5;
+    border-radius:10px;
+    padding:10px;
+    font-weight:700;
+}
+
+.create-box{
+    max-width:650px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:17px;
+    padding:18px;
+}
+
+.notice{
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.5;
+    background:#0c0e13;
+    border:1px solid var(--border);
+    border-radius:11px;
+    padding:11px;
+    margin-top:15px;
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    z-index:300;
+    left:50%;
+    bottom:20px;
+    transform:translate(-50%,20px);
+    opacity:0;
+    pointer-events:none;
+    background:#171a21;
+    border:1px solid #303643;
+    color:white;
+    padding:11px 15px;
+    border-radius:11px;
+    font-size:13px;
+    font-weight:700;
+    transition:.2s;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+@media(max-width:650px){
+    .stats{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .stat{
+        padding:12px 10px;
+    }
+
+    .stat-number{
+        font-size:21px;
+    }
+
+    .admin-stat-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .header{
+        padding:0 12px;
+    }
+
+    .main{
+        width:calc(100% - 22px);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header class="header">
+    <div class="logo">
+        <div class="logo-box">A</div>
+        <span>AlteoVote</span>
+    </div>
+
+    <div class="header-actions">
+        <button class="btn small" id="adminButton">Admin</button>
+    </div>
+</header>
+
+<main class="main">
+
+    <section class="hero">
+        <h1>Vote on what matters.</h1>
+        <p>Choose an option and see the results instantly.</p>
+    </section>
+
+    <input
+        class="search"
+        id="publicSearch"
+        placeholder="Search polls..."
+        autocomplete="off"
+    >
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number" id="publicTotal">0</div>
+            <div class="stat-label">Polls</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="publicOpen">0</div>
+            <div class="stat-label">Open</div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="publicVotes">0</div>
+            <div class="stat-label">Votes</div>
+        </div>
+    </div>
+
+    <div class="section-title">
+        <h2>Polls</h2>
+    </div>
+
+    <div class="poll-list" id="publicPolls"></div>
+
+</main>
+
+</div>
+
+
+<!-- LOGIN -->
+
+<div class="modal-bg" id="loginModal">
+    <div class="modal">
+
+        <h2>Admin Login</h2>
+        <div class="modal-sub">
+            Sign in to manage AlteoVote.
+        </div>
+
+        <div class="field">
+            <label>USERNAME</label>
+            <input id="loginUsername" autocomplete="username">
+        </div>
+
+        <div class="field">
+            <label>PASSWORD</label>
+            <input id="loginPassword" type="password" autocomplete="current-password">
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn" id="cancelLogin">Cancel</button>
+            <button class="btn primary" id="loginSubmit">Login</button>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ADMIN PANEL -->
+
+<div class="admin-bg" id="adminPanel">
+
+    <div class="admin-shell">
+
+        <header class="admin-header">
+
+            <div class="admin-title">
+                <div class="logo-box">A</div>
+
+                <div>
+                    <strong>AlteoVote Admin</strong><br>
+                    <span>Signed in as ALTEO</span>
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button class="btn small" id="closeAdmin">Close</button>
+                <button class="btn small danger" id="logoutButton">Logout</button>
+            </div>
+
+        </header>
+
+        <main class="admin-body">
+
+            <div class="admin-tabs">
+
+                <button class="tab active" data-tab="dashboard">
+                    Dashboard
+                </button>
+
+                <button class="tab" data-tab="manage">
+                    Manage Polls
+                </button>
+
+                <button class="tab" data-tab="create">
+                    Create Poll
+                </button>
+
+            </div>
+
+
+            <!-- DASHBOARD -->
+
+            <section class="admin-view active" id="view-dashboard">
+
+                <div class="admin-stat-grid">
+
+                    <div class="admin-stat">
+                        <div class="num" id="adminTotal">0</div>
+                        <div class="label">Total Polls</div>
+                    </div>
+
+                    <div class="admin-stat">
+                        <div class="num" id="adminOpen">0</div>
+                        <div class="label">Open Polls</div>
+                    </div>
+
+                    <div class="admin-stat">
+                        <div class="num" id="adminEnded">0</div>
+                        <div class="label">Ended Polls</div>
+                    </div>
+
+                    <div class="admin-stat">
+                        <div class="num" id="adminVotes">0</div>
+                        <div class="label">Total Votes</div>
+                    </div>
+
+                </div>
+
+
+                <div class="admin-section">
+
+                    <div class="admin-section-head">
+                        <h2>Quick Actions</h2>
+                    </div>
+
+                    <button
+                        class="btn primary"
+                        id="dashboardCreate"
+                    >
+                        Create New Poll
+                    </button>
+
+                </div>
+
+
+                <div class="admin-section">
+
+                    <div class="admin-section-head">
+                        <h2>Recent Polls</h2>
+
+                        <button
+                            class="btn small"
+                            id="dashboardManage"
+                        >
+                            Manage
+                        </button>
+                    </div>
+
+                    <div
+                        class="admin-poll-list"
+                        id="recentAdminPolls"
+                    ></div>
+
+                </div>
+
+
+                <div class="notice">
+                    AlteoVote stores polls and votes locally on this device
+                    using browser storage. No server or external database is
+                    used.
+                </div>
+
+            </section>
+
+
+            <!-- MANAGE -->
+
+            <section class="admin-view" id="view-manage">
+
+                <div class="admin-section-head">
+                    <h2>Manage Polls</h2>
+
+                    <button
+                        class="btn primary small"
+                        id="manageCreate"
+                    >
+                        + Create Poll
+                    </button>
+                </div>
+
+                <input
+                    class="admin-search"
+                    id="adminSearch"
+                    placeholder="Search polls..."
+                    autocomplete="off"
+                >
+
+                <div
+                    class="admin-poll-list"
+                    id="adminPolls"
+                ></div>
+
+            </section>
+
+
+            <!-- CREATE -->
+
+            <section class="admin-view" id="view-create">
+
+                <div class="create-box">
+
+                    <h2 style="margin-top:0">
+                        Create Poll
+                    </h2>
+
+                    <p class="modal-sub">
+                        Create a new poll for users to vote on.
+                    </p>
+
+                    <div class="field">
+                        <label>QUESTION</label>
+                        <input
+                            id="createQuestion"
+                            placeholder="What should we vote on?"
+                        >
+                    </div>
+
+                    <div class="field">
+                        <label>DESCRIPTION</label>
+                        <textarea
+                            id="createDescription"
+                            placeholder="Optional description..."
+                        ></textarea>
+                    </div>
+
+                    <div class="field">
+
+                        <label>CHOICES</label>
+
+                        <div id="choiceContainer"></div>
+
+                        <button
+                            class="add-choice"
+                            id="addChoice"
+                        >
+                            + Add Choice
+                        </button>
+
+                    </div>
+
+                    <button
+                        class="btn primary"
+                        id="createPollButton"
+                        style="width:100%;margin-top:7px"
+                    >
+                        Create Poll
+                    </button>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+"use strict";
+
+/* ================================
+   CONFIG
+================================ */
+
+const ADMIN_USERNAME = "ALTEO";
+const ADMIN_PASSWORD = "Alteo202";
+
+const DATABASE_KEY = "ALTEOVOTE_DATABASE_4";
+const SESSION_KEY = "ALTEOVOTE_ADMIN_SESSION_4";
+const VOTER_KEY = "ALTEOVOTE_VOTER_ID_4";
+
+let memoryStorage = {};
+
+
+/* ================================
+   SAFE STORAGE
+================================ */
+
+function storageGet(key){
+    try{
+        return localStorage.getItem(key);
+    }catch(error){
+        return memoryStorage[key] ?? null;
+    }
+}
+
+function storageSet(key,value){
+    try{
+        localStorage.setItem(key,value);
+    }catch(error){
+        memoryStorage[key] = value;
+    }
+}
+
+function storageRemove(key){
+    try{
+        localStorage.removeItem(key);
+    }catch(error){
+        delete memoryStorage[key];
+    }
+}
+
+
+/* ================================
+   DATABASE
+================================ */
+
+function defaultDatabase(){
+    return {
+        polls:[]
+    };
+}
+
+function loadDatabase(){
+
+    try{
+        const raw = storageGet(DATABASE_KEY);
+
+        if(!raw){
+            return defaultDatabase();
+        }
+
+        const data = JSON.parse(raw);
+
+        if(!data || !Array.isArray(data.polls)){
+            return defaultDatabase();
+        }
+
+        return data;
+
+    }catch(error){
+        return defaultDatabase();
+    }
+}
+
+let database = loadDatabase();
+
+function saveDatabase(){
+    storageSet(
+        DATABASE_KEY,
+        JSON.stringify(database)
+    );
+}
+
+
+/* ================================
+   IDS
+================================ */
+
+function makeId(){
+    return Date.now().toString(36) +
+        Math.random().toString(36).slice(2,9);
+}
+
+function getVoterId(){
+
+    let id = storageGet(VOTER_KEY);
+
+    if(!id){
+        id =
+            "voter_" +
+            Date.now().toString(36) +
+            "_" +
+            Math.random().toString(36).slice(2);
+
+        storageSet(VOTER_KEY,id);
+    }
+
+    return id;
+}
+
+
+/* ================================
+   HELPERS
+================================ */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function formatDate(timestamp){
+
+    try{
+        return new Date(timestamp).toLocaleString(
+            undefined,
+            {
+                year:"numeric",
+                month:"short",
+                day:"numeric",
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        );
+    }catch(error){
+        return "";
+    }
+}
+
+function totalVotes(poll){
+
+    return poll.options.reduce(
+        (sum,option) => sum + Number(option.votes || 0),
+        0
+    );
+}
+
+function isAdmin(){
+    return storageGet(SESSION_KEY) === "true";
+}
+
+function showToast(message){
+
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+    toast.classList.add("show");
+
+    clearTimeout(showToast.timer);
+
+    showToast.timer = setTimeout(()=>{
+        toast.classList.remove("show");
+    },2200);
+}
+
+
+/* ================================
+   PUBLIC RENDER
+================================ */
+
+function renderPublic(){
+
+    const search =
+        document.getElementById("publicSearch")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const polls =
+        database.polls.filter(poll => {
+
+            if(!search) return true;
+
+            return (
+                poll.question.toLowerCase().includes(search) ||
+                (poll.description || "")
+                    .toLowerCase()
+                    .includes(search)
+            );
+        });
+
+    const total = database.polls.length;
+
+    const open =
+        database.polls.filter(
+            poll => poll.open
+        ).length;
+
+    const votes =
+        database.polls.reduce(
+            (sum,poll) => sum + totalVotes(poll),
+            0
+        );
+
+    document.getElementById("publicTotal")
+        .textContent = total;
+
+    document.getElementById("publicOpen")
+        .textContent = open;
+
+    document.getElementById("publicVotes")
+        .textContent = votes;
+
+
+    const container =
+        document.getElementById("publicPolls");
+
+    if(!polls.length){
+
+        container.innerHTML = `
+            <div class="empty">
+                No polls found.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    container.innerHTML = polls
+        .slice()
+        .sort((a,b)=>b.createdAt-a.createdAt)
+        .map(renderPublicPoll)
+        .join("");
+}
+
+
+function renderPublicPoll(poll){
+
+    const votes = totalVotes(poll);
+    const voterId = getVoterId();
+
+    const alreadyVoted =
+        Boolean(poll.voters && poll.voters[voterId]);
+
+    const statusClass =
+        poll.open ? "open" : "ended";
+
+    const statusText =
+        poll.open ? "OPEN" : "ENDED";
+
+
+    const options = poll.options.map(
+        (option,index)=>{
+
+            const percent =
+                votes === 0
+                    ? 0
+                    : Math.round(
+                        option.votes / votes * 100
+                    );
+
+            const disabled =
+                !poll.open ||
+                alreadyVoted;
+
+            return `
+                <button
+                    class="option"
+                    ${disabled ? "disabled" : ""}
+                    onclick="vote('${poll.id}',${index})"
+                >
+
+                    <div
+                        class="option-bar"
+                        style="width:${percent}%"
+                    ></div>
+
+                    <div class="option-content">
+
+                        <span class="option-name">
+                            ${escapeHTML(option.text)}
+                        </span>
+
+                        <span class="option-votes">
+                            ${percent}% · ${option.votes}
+                        </span>
+
+                    </div>
+
+                </button>
+            `;
+        }
+    ).join("");
+
+
+    let footerText = `${votes} vote${votes === 1 ? "" : "s"}`;
+
+    if(alreadyVoted){
+        footerText += " · You voted";
+    }
+
+    if(!poll.open){
+        footerText += " · Poll ended";
+    }
+
+
+    return `
+        <article class="poll-card">
+
+            <div class="poll-top">
+
+                <div>
+                    <div class="poll-question">
+                        ${escapeHTML(poll.question)}
+                    </div>
+
+                    ${
+                        poll.description
+                        ? `
+                            <div class="poll-description">
+                                ${escapeHTML(poll.description)}
+                            </div>
+                        `
+                        : ""
+                    }
+                </div>
+
+                <div class="status ${statusClass}">
+                    ${statusText}
+                </div>
+
+            </div>
+
+            <div class="options">
+                ${options}
+            </div>
+
+            <div class="poll-footer">
+                <span>${footerText}</span>
+                <span>${formatDate(poll.createdAt)}</span>
+            </div>
+
+        </article>
+    `;
+}
+
+
+/* ================================
+   VOTING
+================================ */
+
+function vote(pollId,optionIndex){
+
+    const poll =
+        database.polls.find(
+            item => item.id === pollId
+        );
+
+    if(!poll) return;
+
+    if(!poll.open){
+        showToast("This poll has ended");
+        return;
+    }
+
+    const voterId = getVoterId();
+
+    if(!poll.voters){
+        poll.voters = {};
+    }
+
+    if(poll.voters[voterId]){
+        showToast("You already voted");
+        return;
+    }
+
+    if(
+        !poll.options[optionIndex]
+    ){
+        return;
+    }
+
+    poll.options[optionIndex].votes++;
+
+    poll.voters[voterId] = true;
+
+    saveDatabase();
+
+    renderAll();
+
+    showToast("Vote submitted");
+}
+
+
+/* ================================
+   ADMIN LOGIN
+================================ */
+
+function openLogin(){
+
+    document.getElementById("loginModal")
+        .classList.add("show");
+
+    document.getElementById("loginUsername")
+        .focus();
+}
+
+function closeLogin(){
+
+    document.getElementById("loginModal")
+        .classList.remove("show");
+}
+
+function login(){
+
+    const username =
+        document.getElementById("loginUsername")
+        .value
+        .trim();
+
+    const password =
+        document.getElementById("loginPassword")
+        .value;
+
+    if(
+        username === ADMIN_USERNAME &&
+        password === ADMIN_PASSWORD
+    ){
+
+        storageSet(
+            SESSION_KEY,
+            "true"
+        );
+
+        closeLogin();
+
+        openAdminPanel();
+
+        showToast("Logged in");
+        return;
+    }
+
+    showToast("Invalid admin login");
+}
+
+
+/* ================================
+   ADMIN PANEL
+================================ */
+
+function openAdminPanel(){
+
+    if(!isAdmin()){
+        openLogin();
+        return;
+    }
+
+    document.getElementById("adminPanel")
+        .classList.add("show");
+
+    renderAdmin();
+}
+
+function closeAdminPanel(){
+
+    document.getElementById("adminPanel")
+        .classList.remove("show");
+}
+
+function logout(){
+
+    storageRemove(SESSION_KEY);
+
+    closeAdminPanel();
+
+    showToast("Logged out");
+}
+
+
+/* ================================
+   ADMIN TABS
+================================ */
+
+function switchAdminTab(tab){
+
+    document.querySelectorAll(".tab")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.tab === tab
+            );
+
+        });
+
+    document.querySelectorAll(".admin-view")
+        .forEach(view => {
+
+            view.classList.toggle(
+                "active",
+                view.id === "view-" + tab
+            );
+
+        });
+
+    if(tab === "dashboard"){
+        renderAdminDashboard();
+    }
+
+    if(tab === "manage"){
+        renderAdminPolls();
+    }
+
+    if(tab === "create"){
+        prepareCreateForm();
+    }
+}
+
+
+/* ================================
+   ADMIN RENDER
+================================ */
+
+function renderAdmin(){
+
+    renderAdminDashboard();
+    renderAdminPolls();
+}
+
+function renderAdminDashboard(){
+
+    const total =
+        database.polls.length;
+
+    const open =
+        database.polls.filter(
+            poll => poll.open
+        ).length;
+
+    const ended =
+        total - open;
+
+    const votes =
+        database.polls.reduce(
+            (sum,poll)=>sum + totalVotes(poll),
+            0
+        );
+
+    document.getElementById("adminTotal")
+        .textContent = total;
+
+    document.getElementById("adminOpen")
+        .textContent = open;
+
+    document.getElementById("adminEnded")
+        .textContent = ended;
+
+    document.getElementById("adminVotes")
+        .textContent = votes;
+
+
+    const recent =
+        database.polls
+            .slice()
+            .sort((a,b)=>b.createdAt-a.createdAt)
+            .slice(0,5);
+
+    const container =
+        document.getElementById("recentAdminPolls");
+
+    if(!recent.length){
+
+        container.innerHTML = `
+            <div class="empty">
+                No polls yet.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        recent
+        .map(renderAdminPoll)
+        .join("");
+}
+
+
+/* ================================
+   ADMIN POLL LIST
+================================ */
+
+function renderAdminPolls(){
+
+    const search =
+        document.getElementById("adminSearch")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const polls =
+        database.polls
+            .filter(poll => {
+
+                if(!search) return true;
+
+                return poll.question
+                    .toLowerCase()
+                    .includes(search);
+            })
+            .slice()
+            .sort((a,b)=>b.createdAt-a.createdAt);
+
+
+    const container =
+        document.getElementById("adminPolls");
+
+    if(!polls.length){
+
+        container.innerHTML = `
+            <div class="empty">
+                No matching polls.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML =
+        polls
+        .map(renderAdminPoll)
+        .join("");
+}
+
+
+function renderAdminPoll(poll){
+
+    const votes = totalVotes(poll);
+
+    const statusClass =
+        poll.open ? "open" : "ended";
+
+    const statusText =
+        poll.open ? "OPEN" : "ENDED";
+
+
+    return `
+        <div class="admin-poll">
+
+            <div class="admin-poll-main">
+
+                <div>
+
+                    <h3>
+                        ${escapeHTML(poll.question)}
+                    </h3>
+
+                    <div class="admin-meta">
+                        ${votes} vote${votes === 1 ? "" : "s"}
+                        ·
+                        ${poll.options.length} choices
+                        ·
+                        ${formatDate(poll.createdAt)}
+                    </div>
+
+                </div>
+
+                <div class="status ${statusClass}">
+                    ${statusText}
+                </div>
+
+            </div>
+
+
+            <div class="admin-actions">
+
+                ${
+                    poll.open
+                    ? `
+                        <button
+                            class="btn small danger"
+                            onclick="endPoll('${poll.id}')"
+                        >
+                            End Poll
+                        </button>
+                    `
+                    : `
+                        <button
+                            class="btn small success"
+                            onclick="reopenPoll('${poll.id}')"
+                        >
+                            Reopen
+                        </button>
+                    `
+                }
+
+
+                <button
+                    class="btn small"
+                    onclick="viewAdminResults('${poll.id}')"
+                >
+                    Results
+                </button>
+
+
+                <button
+                    class="btn small danger"
+                    onclick="deletePoll('${poll.id}')"
+                >
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* ================================
+   CREATE POLL
+================================ */
+
+function prepareCreateForm(){
+
+    const container =
+        document.getElementById("choiceContainer");
+
+    if(container.children.length){
+        return;
+    }
+
+    container.innerHTML = "";
+
+    addChoice();
+    addChoice();
+}
+
+function addChoice(){
+
+    const container =
+        document.getElementById("choiceContainer");
+
+    const row =
+        document.createElement("div");
+
+    row.className = "choice-row";
+
+    row.innerHTML = `
+        <input
+            class="choice-input"
+            placeholder="Choice"
+            maxlength="100"
+        >
+
+        <button
+            class="remove-choice"
+            type="button"
+        >
+            ×
+        </button>
+    `;
+
+    row.querySelector(".remove-choice")
+        .addEventListener(
+            "click",
+            ()=>{
+                if(
+                    container.children.length <= 2
+                ){
+                    showToast(
+                        "A poll needs at least 2 choices"
+                    );
+                    return;
+                }
+
+                row.remove();
+            }
+        );
+
+    container.appendChild(row);
+}
+
+function clearCreateForm(){
+
+    document.getElementById("createQuestion")
+        .value = "";
+
+    document.getElementById("createDescription")
+        .value = "";
+
+    document.getElementById("choiceContainer")
+        .innerHTML = "";
+
+    addChoice();
+    addChoice();
+}
+
+function createPoll(){
+
+    const question =
+        document.getElementById("createQuestion")
+            .value
+            .trim();
+
+    const description =
+        document.getElementById("createDescription")
+            .value
+            .trim();
+
+    const inputs =
+        Array.from(
+            document.querySelectorAll(".choice-input")
+        );
+
+    const choices =
+        inputs
+            .map(input => input.value.trim())
+            .filter(Boolean);
+
+
+    if(!question){
+        showToast("Enter a poll question");
+        return;
+    }
+
+    if(choices.length < 2){
+        showToast("Add at least 2 choices");
+        return;
+    }
+
+    const poll = {
+
+        id:makeId(),
+
+        question,
+
+        description,
+
+        open:true,
+
+        createdAt:Date.now(),
+
+        options:choices.map(text => ({
+            text,
+            votes:0
+        })),
+
+        voters:{}
+
+    };
+
+
+    database.polls.push(poll);
+
+    saveDatabase();
+
+    clearCreateForm();
+
+    renderAll();
+
+    switchAdminTab("manage");
+
+    showToast("Poll created");
+}
+
+
+/* ================================
+   END / REOPEN
+================================ */
+
+function endPoll(id){
+
+    const poll =
+        database.polls.find(
+            item => item.id === id
+        );
+
+    if(!poll) return;
+
+    if(
+        !confirm(
+            "End this poll?\n\nUsers will no longer be able to vote."
+        )
+    ){
+        return;
+    }
+
+    poll.open = false;
+
+    saveDatabase();
+
+    renderAll();
+
+    showToast("Poll ended");
+}
+
+
+function reopenPoll(id){
+
+    const poll =
+        database.polls.find(
+            item => item.id === id
+        );
+
+    if(!poll) return;
+
+    poll.open = true;
+
+    saveDatabase();
+
+    renderAll();
+
+    showToast("Poll reopened");
+}
+
+
+/* ================================
+   DELETE
+================================ */
+
+function deletePoll(id){
+
+    const poll =
+        database.polls.find(
+            item => item.id === id
+        );
+
+    if(!poll) return;
+
+    if(
+        !confirm(
+            "Delete this poll permanently?\n\nAll votes for this poll will also be deleted."
+        )
+    ){
+        return;
+    }
+
+    database.polls =
+        database.polls.filter(
+            item => item.id !== id
+        );
+
+    saveDatabase();
+
+    renderAll();
+
+    showToast("Poll deleted");
+}
+
+
+/* ================================
+   RESULTS
+================================ */
+
+function viewAdminResults(id){
+
+    const poll =
+        database.polls.find(
+            item => item.id === id
+        );
+
+    if(!poll) return;
+
+    const votes = totalVotes(poll);
+
+    let message =
+        poll.question +
+        "\n\n";
+
+    poll.options.forEach(
+        option => {
+
+            const percent =
+                votes === 0
+                    ? 0
+                    : Math.round(
+                        option.votes /
+                        votes *
+                        100
+                    );
+
+            message +=
+                option.text +
+                ": " +
+                option.votes +
+                " votes (" +
+                percent +
+                "%)\n";
+        }
+    );
+
+    message +=
+        "\nTotal votes: " +
+        votes;
+
+    alert(message);
+}
+
+
+/* ================================
+   RENDER EVERYTHING
+================================ */
+
+function renderAll(){
+
+    renderPublic();
+
+    if(isAdmin()){
+        renderAdmin();
+    }
+}
+
+
+/* ================================
+   EVENTS
+================================ */
+
+document
+    .getElementById("adminButton")
+    .addEventListener(
+        "click",
+        ()=>{
+            if(isAdmin()){
+                openAdminPanel();
+            }else{
+                openLogin();
+            }
+        }
+    );
+
+
+document
+    .getElementById("cancelLogin")
+    .addEventListener(
+        "click",
+        closeLogin
+    );
+
+
+document
+    .getElementById("loginSubmit")
+    .addEventListener(
+        "click",
+        login
+    );
+
+
+document
+    .getElementById("loginPassword")
+    .addEventListener(
+        "keydown",
+        event=>{
+            if(event.key === "Enter"){
+                login();
+            }
+        }
+    );
+
+
+document
+    .getElementById("closeAdmin")
+    .addEventListener(
+        "click",
+        closeAdminPanel
+    );
+
+
+document
+    .getElementById("logoutButton")
+    .addEventListener(
+        "click",
+        logout
+    );
+
+
+document
+    .getElementById("publicSearch")
+    .addEventListener(
+        "input",
+        renderPublic
+    );
+
+
+document
+    .getElementById("adminSearch")
+    .addEventListener(
+        "input",
+        renderAdminPolls
+    );
+
+
+document
+    .querySelectorAll(".tab")
+    .forEach(button=>{
+
+        button.addEventListener(
+            "click",
+            ()=>{
+                switchAdminTab(
+                    button.dataset.tab
+                );
+            }
+        );
+
+    });
+
+
+document
+    .getElementById("dashboardCreate")
+    .addEventListener(
+        "click",
+        ()=>{
+            switchAdminTab("create");
+        }
+    );
+
+
+document
+    .getElementById("manageCreate")
+    .addEventListener(
+        "click",
+        ()=>{
+            switchAdminTab("create");
+        }
+    );
+
+
+document
+    .getElementById("dashboardManage")
+    .addEventListener(
+        "click",
+        ()=>{
+            switchAdminTab("manage");
+        }
+    );
+
+
+document
+    .getElementById("addChoice")
+    .addEventListener(
+        "click",
+        addChoice
+    );
+
+
+document
+    .getElementById("createPollButton")
+    .addEventListener(
+        "click",
+        createPoll
+    );
+
+
+/* ================================
+   START
+================================ */
+
+prepareCreateForm();
+renderAll();
+
+</script>
+
+</body>
+</html>
